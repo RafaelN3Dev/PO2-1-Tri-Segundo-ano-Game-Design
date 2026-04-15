@@ -12,15 +12,15 @@
         <div id="menu-overlay">
             <h1>ATARI SURVIVAL</h1>
             <div id="features-list">
-                <p>Mecânicas Planejadas:</p>
+                <p>Mecânicas Ativas:</p>
                 <ul>
-                    <li>1. Movimentação 8 Direções</li>
-                    <li>2. Sistema de Recuo (Knockback)</li>
-                    <li>3. Projétil com Cooldown</li>
-                    <li>4. Balas que Ricocheteiam</li>
-                    <li>5. Áreas de Lentidão</li>
-                    <li>6. Dash de Esquiva (Shift)</li>
-                    <li>7. Power-ups de Expansão</li>
+                    <li>1. Movimentação 8 Direções (WASD/Setas)</li>
+                    <li>2. Recuo (Knockback) no Tiro e Impacto</li>
+                    <li>3. Munição (10 balas, recarga 2s)</li>
+                    <li>4. Ricochete (Máx 2 vezes)</li>
+                    <li>5. Poças de Veneno (Lentidão)</li>
+                    <li>6. Dash (Shift Esquerdo - Cooldown 5s)</li>
+                    <li>7. Power-up (Próxima Fase)</li>
                 </ul>
             </div>
             <button id="start-button">START GAME</button>
@@ -28,7 +28,8 @@
         <div id="ui" style="display: none;">
             <div id="score">SCORE: 0000</div>
             <div id="ammo">AMMO: 10/10</div>
-            <div id="lives">LIVES: ❤️❤️❤️</div>
+            <div id="lives-ui">LIVES: ❤️❤️❤️</div>
+            <div id="dash-ui">DASH: <span id="dash-status">READY</span></div>
         </div>
     </div>
     <script src="game.js"></script>
