@@ -3,7 +3,7 @@
 body {
     margin: 0;
     padding: 0;
-    background-color: #1a1a1a;
+    background-color: #0a0a0a;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -16,7 +16,7 @@ body {
 #game-container {
     position: relative;
     border: 4px solid #fff;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0, 136, 255, 0.3);
     width: 800px;
     height: 600px;
 }
@@ -36,17 +36,17 @@ canvas {
     z-index: 10;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     text-shadow: 2px 2px #000;
 }
 
-#menu-overlay {
+#menu-overlay, #score-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background-color: rgba(0, 0, 0, 0.95);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -55,31 +55,73 @@ canvas {
     z-index: 20;
 }
 
-h1 {
-    font-size: 28px;
+.game-title {
+    font-size: 40px;
     margin-bottom: 20px;
     color: #0088ff;
+    text-shadow: 5px 5px #003366;
+    line-height: 1.2;
 }
 
 #features-list {
     font-size: 10px;
-    line-height: 1.8;
-    margin-bottom: 30px;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    color: #aaa;
+    max-width: 300px;
     text-align: left;
 }
 
-#start-button {
+#features-list ul {
+    list-style: none;
+    padding-left: 10px;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+button {
     background-color: #fff;
     color: #000;
     border: none;
-    padding: 15px 30px;
+    padding: 12px 25px;
     font-family: 'Press Start 2P', cursive;
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
     box-shadow: 4px 4px #0088ff;
+    transition: 0.1s;
 }
 
-#start-button:hover {
+button:hover {
     background-color: #0088ff;
     color: #fff;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px #fff;
+}
+
+button:active {
+    transform: translate(2px, 2px);
+    box-shadow: none;
+}
+
+/* Scoreboard Styles */
+#score-table {
+    width: 300px;
+    margin-bottom: 30px;
+    border-collapse: collapse;
+}
+
+#score-table th {
+    border-bottom: 2px solid #0088ff;
+    padding: 10px;
+    font-size: 12px;
+}
+
+#score-table td {
+    padding: 10px;
+    font-size: 14px;
+    color: #ffd700;
 }

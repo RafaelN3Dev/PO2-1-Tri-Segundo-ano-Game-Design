@@ -1,18 +1,22 @@
 /**
- * Atari Survival - Final Build with all Mechanics (1-7)
+ * VOID SURVIVAL - Final Build
  */
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const menuOverlay = document.getElementById('menu-overlay');
+const scoreOverlay = document.getElementById('score-overlay');
 const startButton = document.getElementById('start-button');
+const scoreButton = document.getElementById('score-button');
+const backButton = document.getElementById('back-button');
 const ui = document.getElementById('ui');
 const scoreElement = document.getElementById('score');
 const ammoElement = document.getElementById('ammo');
 const livesElement = document.getElementById('lives-ui');
 const dashStatusElement = document.getElementById('dash-status');
+const scoreBody = document.getElementById('score-body');
 
-// Constants & Modifiable Settings
+// Constants
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const PLAYER_SIZE = 20;
@@ -63,16 +67,12 @@ class PowerUp {
         this.x = Math.random() * (CANVAS_WIDTH - 15);
         this.y = Math.random() * (CANVAS_HEIGHT - 15);
         this.size = 15;
-        this.timer = 7000; // 7 seconds
-        
-        // 70% chance for advantage
+        this.timer = 7000;
         const isAdvantage = Math.random() < 0.7;
-        this.color = isAdvantage ? '#ffd700' : '#8b0000'; // Gold vs Dark Red
-        
+        this.color = isAdvantage ? '#ffd700' : '#8b0000';
         const types = isAdvantage ? 
             ['+5A', '+10A', '+SPD', '+LIFE', '-REG', '-DSH'] : 
             ['-3A', '-5A', '-SPD', '-LIFE', '+REG', '+DSH'];
-        
         this.type = types[Math.floor(Math.random() * types.length)];
     }
     update(dt) {
@@ -84,8 +84,6 @@ class PowerUp {
         ctx.fillRect(this.x, this.y, this.size, this.size);
         ctx.strokeStyle = '#fff';
         ctx.strokeRect(this.x, this.y, this.size, this.size);
-        
-        // Small indicator of expiration
         ctx.fillStyle = '#fff';
         ctx.fillRect(this.x, this.y + this.size + 2, (this.timer/7000) * this.size, 2);
     }
@@ -179,7 +177,7 @@ class Bullet {
 
 class Enemy {
     constructor(x, y) {
-        this.x = x; this.y = y; this.speed = 0.8; this.active = true; this.hp = 2; // Hit twice to die
+        this.x = x; this.y = y; this.speed = 0.8; this.active = true; this.hp = 2;
         this.kbX = 0; this.kbY = 0;
     }
     update(tx, ty) {
@@ -201,7 +199,16 @@ let bullets = [], enemies = [], slowZones = [
 ];
 const keys = {};
 
-window.onkeydown = (e) => keys[e.key] = true;
+window.onkeydown = (e) => {
+    keys[e.key] = true;
+    if (e.key === 'Escape') {
+        if (gameState === 'PLAYING') {
+            showScoreBoard();
+        } else if (gameState === 'SCOREBOARD') {
+            closeScoreBoard();
+        }
+    }
+};
 window.onkeyup = (e) => keys[e.key] = false;
 window.onmousemove = (e) => {
     const r = canvas.getBoundingClientRect();
@@ -254,6 +261,45 @@ function spawn() {
     setTimeout(spawn, Math.max(500, 2000 - score/10));
 }
 
+function saveScore(newScore) {
+    let scores = JSON.parse(localStorage.getItem('voidSurvivalScores') || '[]');
+    scores.push(newScore);
+    scores.sort((a, b) => b - a);
+    scores = scores.slice(0, 5); // Kepp top 5
+    localStorage.setItem('voidSurvivalScores', JSON.stringify(scores));
+}
+
+function showScoreBoard() {
+    const previousState = gameState;
+    gameState = 'SCOREBOARD';
+    scoreOverlay.style.display = 'flex';
+    menuOverlay.style.display = 'none';
+    ui.style.display = 'none';
+    
+    let scores = JSON.parse(localStorage.getItem('voidSurvivalScores') || '[]');
+    scoreBody.innerHTML = scores.map((s, i) => `<tr><td>#${i+1}</td><td>${s}</td></tr>`).join('') || '<tr><td colspan="2">NO SCORES YET</td></tr>';
+}
+
+function closeScoreBoard() {
+    scoreOverlay.style.display = 'none';
+    if (lives > 0 && gameState !== 'MENU' && gameState !== 'GAMEOVER') {
+        gameState = 'PLAYING';
+        ui.style.display = 'flex';
+    } else {
+        gameState = 'MENU';
+        menuOverlay.style.display = 'flex';
+    }
+}
+
+function gameOver() {
+    saveScore(score);
+    gameState = 'GAMEOVER';
+    menuOverlay.style.display = 'flex';
+    menuOverlay.querySelector('h1').innerHTML = 'GAME OVER<br><span style="font-size: 0.5em; color: #ffd700;">FINAL SCORE: ' + score + '</span>';
+    startButton.innerText = 'RESTART';
+    ui.style.display = 'none';
+}
+
 function gameLoop(ts) {
     const dt = ts - (gameLoop.last || ts); gameLoop.last = ts;
     ctx.clearRect(0,0,800,600);
@@ -261,12 +307,10 @@ function gameLoop(ts) {
         slowZones.forEach(z => z.draw(ctx));
         currentPowerUp.update(dt);
         currentPowerUp.draw(ctx);
-        
         player.update(keys, dt, slowZones);
         bullets.forEach(b => b.update());
         enemies.forEach(e => e.update(player.x, player.y));
         
-        // Pick PowerUp
         if (player.x < currentPowerUp.x + 15 && player.x + 20 > currentPowerUp.x &&
             player.y < currentPowerUp.y + 15 && player.y + 20 > currentPowerUp.y) {
             applyPowerUp(currentPowerUp.type);
@@ -275,7 +319,7 @@ function gameLoop(ts) {
 
         bullets.forEach(b => enemies.forEach(e => {
             if (b.active && e.active && b.x < e.x+20 && b.x+6 > e.x && b.y < e.y+20 && b.y+6 > e.y) {
-                b.active = false; e.hp -= 1; // Bullet damage
+                b.active = false; e.hp -= 1;
                 e.kbX += b.dx*10; e.kbY += b.dy*10;
                 if (e.hp <= 0) { e.active = false; score += 100; updateUI(); }
             }
@@ -285,13 +329,12 @@ function gameLoop(ts) {
             if (e.active && player.invulnerable === 0 && !player.isDashing &&
                 player.x < e.x+20 && player.x+20 > e.x && player.y < e.y+20 && player.y+20 > e.y) {
                 lives--; player.invulnerable = 60; updateUI();
-                if (lives <= 0) { gameState = 'GAMEOVER'; menuOverlay.style.display = 'flex'; menuOverlay.querySelector('h1').innerText = 'GAME OVER'; ui.style.display = 'none'; }
+                if (lives <= 0) gameOver();
             }
         });
 
         bullets = bullets.filter(b => b.active);
         enemies = enemies.filter(e => e.active);
-        
         player.draw(ctx); bullets.forEach(b => b.draw(ctx)); enemies.forEach(e => e.draw(ctx));
         updateUI();
     }
@@ -305,5 +348,8 @@ startButton.onclick = () => {
     gameState = 'PLAYING'; menuOverlay.style.display = 'none'; ui.style.display = 'flex';
     updateUI(); spawn();
 };
+
+scoreButton.onclick = showScoreBoard;
+backButton.onclick = closeScoreBoard;
 
 gameLoop(0);

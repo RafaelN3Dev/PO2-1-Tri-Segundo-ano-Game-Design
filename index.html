@@ -3,28 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atari Survival - Arena</title>
+    <title>VOID SURVIVAL - Atari Edition</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="game-container">
         <canvas id="gameCanvas"></canvas>
+        
+        <!-- Main Menu -->
         <div id="menu-overlay">
-            <h1>ATARI SURVIVAL</h1>
+            <h1 class="game-title">NEON VOID<br><span style="font-size: 0.5em; color: #fff;">SURVIVAL</span></h1>
             <div id="features-list">
                 <p>Mecânicas Ativas:</p>
                 <ul>
-                    <li>1. Movimentação 8 Direções (WASD/Setas)</li>
-                    <li>2. Recuo (Knockback) no Tiro e Impacto</li>
-                    <li>3. Munição (10 balas, recarga 2s)</li>
-                    <li>4. Ricochete (Máx 2 vezes)</li>
-                    <li>5. Poças de Veneno (Lentidão)</li>
-                    <li>6. Dash (Shift Esquerdo - Cooldown 5s)</li>
-                    <li>7. Power-up (Próxima Fase)</li>
+                    <li>1. Movimentação 8 Direções</li>
+                    <li>2. Recuo (Knockback)</li>
+                    <li>3. Munição Regenerativa</li>
+                    <li>4. Balas de Ricochete</li>
+                    <li>5. Poças de Lentidão</li>
+                    <li>6. Dash de Esquiva (Shift)</li>
+                    <li>7. Itens Risco/Recompensa</li>
                 </ul>
             </div>
-            <button id="start-button">START GAME</button>
+            <div class="menu-buttons">
+                <button id="start-button">START GAME</button>
+                <button id="score-button">SCOREBOARD</button>
+            </div>
         </div>
+
+        <!-- Scoreboard Overlay -->
+        <div id="score-overlay" style="display: none;">
+            <h2>HIGH SCORES</h2>
+            <table id="score-table">
+                <thead>
+                    <tr>
+                        <th>RANK</th>
+                        <th>SCORE</th>
+                    </tr>
+                </thead>
+                <tbody id="score-body">
+                    <!-- Scores injected here -->
+                </tbody>
+            </table>
+            <button id="back-button">BACK</button>
+        </div>
+
+        <!-- Gameplay UI -->
         <div id="ui" style="display: none;">
             <div id="score">SCORE: 0000</div>
             <div id="ammo">AMMO: 10/10</div>
