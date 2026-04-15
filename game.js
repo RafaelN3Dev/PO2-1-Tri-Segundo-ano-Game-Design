@@ -126,14 +126,36 @@ class Bullet {
         this.dy = Math.sin(angle);
         this.speed = 12;
         this.active = true;
+        this.bounces = 0;
+        this.maxBounces = 2;
     }
 
     update() {
         this.x += this.dx * this.speed;
         this.y += this.dy * this.speed;
 
-        if (this.x < 0 || this.x > CANVAS_WIDTH || this.y < 0 || this.y > CANVAS_HEIGHT) {
-            this.active = false;
+        // Bounce logic (Ricochete)
+        let bounced = false;
+
+        // Horizontal bounce
+        if (this.x < 0 || this.x + this.width > CANVAS_WIDTH) {
+            this.dx *= -1;
+            this.x = this.x < 0 ? 0 : CANVAS_WIDTH - this.width;
+            bounced = true;
+        }
+
+        // Vertical bounce
+        if (this.y < 0 || this.y + this.height > CANVAS_HEIGHT) {
+            this.dy *= -1;
+            this.y = this.y < 0 ? 0 : CANVAS_HEIGHT - this.height;
+            bounced = true;
+        }
+
+        if (bounced) {
+            this.bounces++;
+            if (this.bounces > this.maxBounces) {
+                this.active = false;
+            }
         }
     }
 
